@@ -58,7 +58,7 @@ void zadanie3() {
 	mns3 += dlina(nm1-nm2, count);
 	int mm = max(stlb1, max(stlb2, umn3));
 
-	printf("| a * b ");	balans(stlb1, mm);
+	printf("| a * b "); balans(stlb1, mm);
 	printf("| a + b "); balans(stlb1, mm);
 	printf("| a - b "); balans(stlb1, mm); printf("|\n");
 
@@ -66,7 +66,7 @@ void zadanie3() {
 	printf("| %d + %d ", nm1, nm2); balans(stlb2, mm);
 	printf("| %d - %d ", nm1, nm2); balans(stlb2, mm); printf("|\n");
 
-	printf("| %d ", nm1 * nm2);	balans(umn3, mm);
+	printf("| %d ", nm1 * nm2); balans(umn3, mm);
 	printf("| %d ", nm1 + nm2); balans(pls3, mm);
 	printf("| %d ", nm1 - nm2); balans(mns3, mm); printf("|\n");
 }
