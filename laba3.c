@@ -4,32 +4,50 @@
 
 void zadanie1() {
 	int num, num2;
-	puts("Введите число:");
+	puts("Р’РІРµРґРёС‚Рµ С‡РёСЃР»Рѕ:");
 	scanf("%d", &num);
-	printf("Введено число %d\n", num);
-	puts("Введите второе число:");
+	printf("Р’РІРµРґРµРЅРѕ С‡РёСЃР»Рѕ %d\n", num);
+	puts("Р’РІРµРґРёС‚Рµ РІС‚РѕСЂРѕРµ С‡РёСЃР»Рѕ:");
 	scanf("%d", &num2);
-	printf("%d Сумма\n", num2+num);             // Сумма
-	printf("%d Разность от вычетания первого числа из второго\n", num2 - num);           // Разность
-	printf("%d Произведение\n", num2*num);             // Произведение 
-	printf("%d Частное от деления второго числа на первое\n", num2 / num); // Частное
-	printf("%d Остаток от деления второго числа на первое\n", num2 % num); // Остаток
+	printf("%d РЎСѓРјРјР°\n", num2+num);             // РЎСѓРјРјР°
+	printf("%d Р Р°Р·РЅРѕСЃС‚СЊ РѕС‚ РІС‹С‡РµС‚Р°РЅРёСЏ РїРµСЂРІРѕРіРѕ С‡РёСЃР»Р° РёР· РІС‚РѕСЂРѕРіРѕ\n", num2 - num);           // Р Р°Р·РЅРѕСЃС‚СЊ
+	printf("%d РџСЂРѕРёР·РІРµРґРµРЅРёРµ\n", num2*num);             // РџСЂРѕРёР·РІРµРґРµРЅРёРµ 
+	printf("%d Р§Р°СЃС‚РЅРѕРµ РѕС‚ РґРµР»РµРЅРёСЏ РІС‚РѕСЂРѕРіРѕ С‡РёСЃР»Р° РЅР° РїРµСЂРІРѕРµ\n", num2 / num); // Р§Р°СЃС‚РЅРѕРµ
+	printf("%d РћСЃС‚Р°С‚РѕРє РѕС‚ РґРµР»РµРЅРёСЏ РІС‚РѕСЂРѕРіРѕ С‡РёСЃР»Р° РЅР° РїРµСЂРІРѕРµ\n", num2 % num); // РћСЃС‚Р°С‚РѕРє
 }
 
 void zadanie2() {
 	int dym;
 	float result;
-	puts("Введите число:");
+	puts("Р’РІРµРґРёС‚Рµ С‡РёСЃР»Рѕ:");
 	scanf("%d" , &dym);
 	result = D * dym;
-	printf("%d дюймов – это %.1f см \n", dym, result);
+	printf("%d РґСЋР№РјРѕРІ вЂ“ СЌС‚Рѕ %.1f СЃРј \n", dym, result);
 }
 
 void zadanie3() {
 	int nm1 = 3, nm2 = 5;
-	printf("| a * b | a + b | a - b |\n");
-		printf("| %d * %d | %d + %d | %d - %d |\n", nm1, nm2, nm1, nm2, nm1, nm2);
-		printf("| %d | %d | %d |", nm1 * nm2, nm1 + nm2, nm1 - nm2);
+
+	int count = 0;
+
+	int stlb1 = 7, stlb2 = 5, umn3 = 2, pls3 = 2, mns3 = 2;
+	stlb2 += dlina(nm1, count) + dlina(nm2, count);
+	umn3 += dlina(nm1*nm2, count);
+	pls3 += dlina(nm1+nm2, count);
+	mns3 += dlina(nm1-nm2, count);
+	int mm = max(stlb1, max(stlb2, umn3));
+
+	printf("| a * b ");	balans(stlb1, mm);
+	printf("| a + b "); balans(stlb1, mm);
+	printf("| a - b "); balans(stlb1, mm); printf("|\n");
+
+	printf("| %d * %d ", nm1, nm2);	balans(stlb2, mm);
+	printf("| %d + %d ", nm1, nm2); balans(stlb2, mm);
+	printf("| %d - %d ", nm1, nm2); balans(stlb2, mm); printf("|\n");
+
+	printf("| %d ", nm1 * nm2);	balans(umn3, mm);
+	printf("| %d ", nm1 + nm2); balans(pls3, mm);
+	printf("| %d ", nm1 - nm2); balans(mns3, mm); printf("|\n");
 }
 
 void main()
