@@ -25,6 +25,27 @@ void zadanie2() {
 	printf("%d дюймов – это %.1f см \n", dym, result);
 }
 
+
+int dlina(int m, int count) {
+	count = 0;
+	if (m < 0) count = 1;
+	while (m != 0) {
+		count++;
+		m /= 10;
+	}
+
+	return count;
+}
+
+void balans(raz, mm) {
+	if (raz < mm) {
+		int razn = mm - raz;
+		for (int q = 0; q < razn; q++) {
+			printf(" ");
+		}
+	}
+};
+
 void zadanie3() {
 	int nm1 = 3, nm2 = 5;
 
