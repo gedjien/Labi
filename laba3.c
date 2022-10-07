@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <locale.h>
+#include <conio.h>
+#include <math.h>
+#include <Windows.h>
+#include <stdbool.h>
+
 #define D 2.54
 
 void zadanie1() {
