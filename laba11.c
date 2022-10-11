@@ -66,7 +66,7 @@ void main()
 	for (int i = 0; i < N; i++) {
 		stlb1 = 5; stlb2 = 2;
 		printf("| a[%d] ", i); stlb1 += dlina(i, count); balans(stlb1, stlb1_1);
-		printf("| %.1lf ", A[i]); stlb2 += dlina(A[i], count)+2; balans(stlb2, stlb2_1);
+		printf("| %.1lf ", A[i]); stlb2 += dlina(A[i], count)+2; balans((A[i] < 0 && A[i] > -1) ? stlb2+1 : stlb2, stlb2_1);
 		printf("| %.1lf ", round(A[i])); printf("\n");
 		A[i] = round(A[i]);
 		sm += round(A[i]);
