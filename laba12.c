@@ -6,6 +6,31 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+void i_btprnt(int a) {
+	puts("int");
+	for(int i = 0; i<= (sizeof(a) - 1); i++) {
+		printf("Byte %d: ", i+1);
+		printf("%02x\n", *((char*)&a + i));
+	} puts("");
+}
+
+void f_btprnt(float a) {
+	puts("float");
+	for (int i = 0; i <= (sizeof(a) - 1); i++) {
+		printf("Byte %d: ", i + 1);
+		printf("%02x\n", *((char*)&a + i));
+	} puts("");
+}
+
+void d_btprnt(double a) {
+	puts("double");
+	for (int i = 0; i <= (sizeof(a) - 1); i++) {
+		printf("Byte %d: ", i + 1);
+		printf("%02x\n", *((char*)&a + i));
+	} puts("");
+}
+
+
 void main()
 {
 	SetConsoleCP(1251);
@@ -92,6 +117,18 @@ void main()
 	a2 = a + 1;
 	a3 = a + 2;
 	a4 = a + 3;
-	printf("%.2x %p \n%.2x %p \n%.2x %p \n%.2x %p \n", *a1, &a1, *a2, &a2, *a3, &a3, *a4, &a4); 
+	printf("%.2x %p \n%.2x %p \n%.2x %p \n%.2x %p \n\n", *a1, &a1, *a2, &a2, *a3, &a3, *a4, &a4); 
+	// 1. Сделайте вывод о порядке размещения байтов в текущей системе. 
 	// B)  с наибольшего адреса ("little-end" - прямое размещение байтов))
+
+	// 2. Усовершенствуйте программу так, чтобы она могла побайтно выводить переменные любого типа.
+
+	/*i_btprnt(0x12345678);
+	i_btprnt(s);*/
+
+	int	i5 = 12345.0;
+	float f5 = 12345.0;
+	double d5 = 12345.0;
+
+	i_btprnt(i5); f_btprnt(f5); d_btprnt(d5);
 }
