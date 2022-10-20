@@ -56,7 +56,7 @@ void main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
-	
+	/*
 	char S1[10] = "123456789";
 	char S2[10] = { 'y','e','s','\0' };
 	char S3[] = "12345";
@@ -66,7 +66,7 @@ void main()
 
 	prntstr(S1, sizeof(S1));
 	prntstr(S2, sizeof(S2));
-	prntstr(S3, sizeof(S3));
+	prntstr(S3, sizeof(S3));*/
 
 	//Задание 1.  Напишите программу, которая запрашивает имя пользователя и здоровается с ним, используя введённое имя.
 	
