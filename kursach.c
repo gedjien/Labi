@@ -233,4 +233,39 @@ void main() {
 	free(mesto);
 	free(range);
 	getchar();   getchar();
+	
+		/*while (1) {
+
+		int menu = 0;
+		printf("Выбор пункта: ");
+		scanf("%i", &menu);
+
+		switch (menu) {
+		case 1:
+			printf("Участники |"); for (int q = 0; q <= 4; q++) {
+				printf(" Игрок %i |", q + 1);
+			}printf(" Побед |"); printf(" Место |"); printf("\n");
+			for (int x = 0; x <= 4; x++) {
+				printf("Игрок %i   |", x + 1);
+				for (int q = 0; q <= 4; q++) {
+					printf("   %i:%i   |", m[x][q], m[4 - x][4 - q]);
+				}
+				printf("   %i   |   %i   |\n", 4 - x, x + 1);
+			}
+			break;
+		case 2:
+			printf("Функция 2\n");
+			break;
+		case 3:
+			printf("Функция 3\n");
+			break;
+		case 4:
+			printf("Функция 3\n");
+			break;
+		default:
+			printf("Неправильный ввод\n");
+		}
+		//ранжирование поиск по баллам
+
+	}*/
 }
