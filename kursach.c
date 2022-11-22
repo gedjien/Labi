@@ -24,6 +24,7 @@ void probeli_2(int probelov) {
 		printf(" ");
 }
 
+//максимальное в массиве
 int max_range(int i, int msv[]) {
 	int max_r = 0;
 	for (int q = 0; q < i; q++) {
@@ -36,6 +37,10 @@ int max_range(int i, int msv[]) {
 //счет количества цифр в числе
 int find_stlb_dln(int x) {
 	int dlina = 0;
+
+	if (x < 0) {
+		return find_stlb_dln(abs(x)) + 1;		
+	}
 
 	if (x == 0) return 1;
 
@@ -181,7 +186,7 @@ void main() {
 
 
 	while (1) {
-	printf("Пункты меню \n1. Вывод таблицы \n2. Функция 2 \n3. Функция 3\n4. Выход\n");
+	printf("Пункты меню \n1. Вывод таблицы \n2. Вывод списка \n3. Функция 3\n4. Выход\n");
 	int menu = 0;
 	printf("Выбор пункта: ");
 	scanf("%i", &menu);
@@ -189,6 +194,7 @@ void main() {
 	case 1:
 	//
 	clrscr();
+	printf("Вывести таблицу\n"); 
 	printf("Участники "); //10 символов в статич слове
 	probeli(10, max(10, max_range(n, range)));
 
@@ -197,6 +203,12 @@ void main() {
 
 		printf(" %s", igrok[q].name);
 
+		//исключ, если имя короче 4 символов
+		if (range[q] < 4) {
+			for (int f = 0; f < 4 - range[q]; f++)
+			printf(" ");
+		}
+
 		printf(" |");//столбцы с игроками
 
 	}printf(" Побед |"); printf(" Место |"); printf("\n"); //шапка
@@ -204,7 +216,6 @@ void main() {
 		printf("%s", igrok[x].name);
 		probeli(range[x], max(10, max_range(range[x], range)));
 
-		//probeli(range[x], find_maxrange(10, range, sizeof(range) / sizeof(int))); 
 		printf("|");//имя участника
 
 		//счёт
@@ -214,8 +225,12 @@ void main() {
 
 			//в случае, если столбец игрока пересекается с своей же строкой
 			if (*(a + x * m + q) == 0 & *(b + x * m + q) == 0) {
+				// если имя короче 4 символов
+				if (range[q] < 4) {
+					for (int f = 0; f < 4 - range[q]; f++)
+						printf(" ");
+				}
 				probeli_2(range[q] + 2); printf("|"); continue;
-
 			}
 
 			//вывод значений таблицы с исключениями и балансировкой пробелов
@@ -224,6 +239,10 @@ void main() {
 			}
 			if ((range[q] + 2) - (o + u + 3) == 1) {
 				printf(" %i:%i  ", *(a + x * m + q), *(b + x * m + q)); printf("|"); continue;
+			}
+
+			if ((range[q] + 2) - (o + u + 3) == 3) {
+				printf("  %i:%i   ", *(a + x * m + q), *(b + x * m + q)); printf("|"); continue;
 			}
 
 			if ((range[q] + 2) - (o + u + 3) % 2 != 0) {
@@ -243,7 +262,41 @@ void main() {
 	break;
 	case 2:
 		clrscr();
-		printf("Функция 2\n");
+		printf("Вывести список\n"); //общее количество очков, поражения
+		
+		int *sumpobed = (int*)malloc(n * sizeof(int));
+		int *sumporaj = (int*)malloc(n * sizeof(int));
+		int maxssum = 0;
+
+		for (int x = 0; x < n; x++) {
+			sumpobed[x] = 0;
+			sumporaj[x] = 0;
+			for (int q = 0; q < n; q++) {
+				sumpobed[x] += *(a + x * m + q);
+				sumporaj[x] += *(b + x * m + q);
+				if (9 + find_stlb_dln(sumpobed[x] - sumporaj[x]) > maxssum) maxssum = 9 + find_stlb_dln(sumpobed[x] - sumporaj[x]);
+			}
+		}
+
+
+		printf("Участники "); //10 символов в статич слове
+		probeli(10, max(10, max_range(n, range)));
+
+		printf("| И | В | П |   +/-   "); //выравнивание 1 столбца
+		probeli(9, maxssum);
+		printf("| Место |"); printf("\n"); //шапка
+		for (int x = 0; x < n; x++) { //уникальные строки
+			printf("%s", igrok[x].name);
+			probeli(range[x], max(10, max_range(range[x], range)));
+
+			printf("|");//имя участника
+			//счёт
+			printf(" %i | %i | %i |", n - 1, pobed[x], n - pobed[x] - 1); // И | В | П
+			printf(" %+i-%i=%i ", sumpobed[x], sumporaj[x], sumpobed[x]-sumporaj[x]); // +/- |
+			probeli(9 + find_stlb_dln(sumpobed[x] - sumporaj[x]), maxssum);
+
+			printf("|   %i   |\n", mesto[x]);
+		}
 		break;
 	case 3:
 		clrscr();
