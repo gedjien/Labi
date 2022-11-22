@@ -21,11 +21,11 @@ void main() {
 	struct player igrok[10];
 	char i = 0;
 
-	file = fopen("Text.txt", "r"); //открытие файла
+	file = fopen("Text.txt", "r"); //Г®ГІГЄГ°Г»ГІГЁГҐ ГґГ Г©Г«Г 
 
 	int n = 1, m = 1;
 
-	fscanf(file, "%i", &n); // чтение размера массива
+	fscanf(file, "%i", &n); // Г·ГІГҐГ­ГЁГҐ Г°Г Г§Г¬ГҐГ°Г  Г¬Г Г±Г±ГЁГўГ 
 
 	m = n;
 
