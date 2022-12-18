@@ -65,7 +65,7 @@ int main()
 	file = fopen("winter.txt", "rt");
 	FILE* in;
 	char b[100];
-	char *a[100];
+	char a[100];
 	int n = 100;
 	a[0] = '\0';
 	char fname[100] = "winter2.txt";
