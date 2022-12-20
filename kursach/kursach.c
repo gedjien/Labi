@@ -8,8 +8,6 @@
 
 int clrscr();
 
-
-
 void main() {
 
 	//SetConsoleCP(1251);
@@ -17,7 +15,7 @@ void main() {
 
 	setlocale(LC_ALL, "RUS");
 
-	int i = 0, r = 0;
+	int i = 0, r = 1;
 
 	FILE *file;
 	file = fopen("fscanf.txt", "r"); //открытие файла
