@@ -8,6 +8,8 @@
 
 int clrscr();
 
+
+
 void main() {
 
 	//SetConsoleCP(1251);
@@ -15,7 +17,7 @@ void main() {
 
 	setlocale(LC_ALL, "RUS");
 
-	int i = 0, r = 1;
+	int i = 0, r = 0;
 
 	FILE *file;
 	file = fopen("fscanf.txt", "r"); //открытие файла
@@ -79,12 +81,47 @@ void main() {
 		mesto[x] = i - mesto[x];
 	}
 
+	//поиск макс/мин/сред знач
+	int *maxkolvo = (int*)malloc(i * sizeof(int));
+	for (int q = 0; q < i; q++)  // цикл по строкам
+	{
+		int max_ochkov = 0;
+		for (int x = 0; x < i; x++)  // цикл по столбцам
+		{
+			if (max_ochkov < *(a + q * r + x)) max_ochkov = *(a + q * r + x);
+		}
+		maxkolvo[q] = max_ochkov;
+	}
+
+	int *minkolvo = (int*)malloc(i * sizeof(int));
+	for (int q = 0; q < i; q++)  // цикл по строкам
+	{
+		minkolvo[q] = maxkolvo[q];
+		for (int x = 0; x < i; x++)  // цикл по столбцам
+		{
+			if (*(a + q * r + x) == 0) { continue; }
+			if (*(a + q * r + x) < maxkolvo[q])
+				minkolvo[q] = *(a + q * r + x);
+		}
+	}
+
+	int *sredkolvo = (int*)malloc(i * sizeof(int));
+	for (int q = 0; q < i; q++)  // цикл по строкам
+	{
+		int sred_ochkov = 0;
+		for (int x = 0; x < i; x++)  // цикл по столбцам
+		{
+			sred_ochkov += *(a + q * r + x);
+		}
+		sredkolvo[q] = sred_ochkov / (i-1);
+	}
+	
 
 	int sortirovka = 0; //переменная для вывода по умолчанию
 	int last_choose = 1; //переменная последнего выбранного пункта
 
 	while (1) {
-		printf("Пункты меню \n1. Вывод таблицы \n2. Вывод списка \n3. Способ вывода (обычный/в обратном порядке)\n4. Выход\n");
+		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Способ вывода (обычный/в обратном порядке)\n4. Выход\n");
 
 		int menu = 0;
 		printf("Выбор пункта: ");
@@ -96,13 +133,13 @@ void main() {
 		case1:
 			clrscr();
 			if (sortirovka == 0) {
-				printf("Вывести таблицу (Вывод обычный)\n");
+				printf("Вывести исходную таблицу (Вывод обычный)\n");
 				printf("Номер | Имя участника |");
 
 				for (int q = 0; q < i; q++) {
 					printf(" %3i%2s |", q + 1, "");
 				}
-				printf(" Побед |"); printf(" Место |"); printf("\n"); //шапка
+				printf("\n"); //шапка
 
 
 				for (int x = 0; x < i; x++) { //уникальные строки
@@ -115,21 +152,20 @@ void main() {
 						printf(" %2i:%-2i |", *(a + x * r + q), *(b + x * r + q));
 					}
 
-					printf("   %i   |   %i   |\n", pobed[x], mesto[x]);
+					printf("\n");
 				}
 			}
 			//
 			//
 			//
 			else {
-				printf("Вывести таблицу (Вывод в обратном порядке)\n");
+				printf("Вывести исходную таблицу (Вывод в обратном порядке)\n");
 				printf("Номер | Имя участника |");
 
 				for (int q = i - 1; q >= 0; q--) {
 					printf(" %3i%2s |", q + 1, "");
 				}
-				printf(" Побед |"); printf(" Место |"); printf("\n"); //шапка
-
+				printf("\n"); //шапка
 
 				for (int x = i - 1; x >= 0; x--) { //уникальные строки
 					printf("%5i | %13s |", x + 1, name[x]);
@@ -141,7 +177,7 @@ void main() {
 						printf(" %2i:%-2i |", *(a + x * r + q), *(b + x * r + q));
 					}
 
-					printf("   %i   |   %i   |\n", pobed[x], mesto[x]);
+					printf("\n");
 				}
 			}
 			break;
@@ -162,17 +198,20 @@ void main() {
 			}
 
 			if (sortirovka == 0) {
-				printf("Вывести список (Вывод обычный)\n"); //общее количество очков, поражения
+				printf("Вывести результирующую таблицу (Вывод обычный)\n"); //общее количество очков, поражения
 
 				printf("Имя участника ");
-
-				printf("| И | В | П | %9s%6s ", "+/-", ""); //выравнивание 1 столбца
+				// игр | выиграно | проиграно | КОЭФФИЦИНЕНТ РАСЧЕТА СУММЫ ОЧКОВ ( ОТНОШЕНИЕ ВЫИГРЫШ/ПРОИГРЫШ )
+				// ОБЩ, СРЕД, МИН, МАКС КОЛИЧЕСТВО ОЧКОВ
+				printf("| И | В | П | %9s | %9s ", "Отношение выигрыш/проигыш", "Общ/Сред/Мин/Макс количество очков"); //выравнивание 1 столбца
 				printf("| Место |"); printf("\n"); //шапка
 				for (int x = 0; x < i; x++) { //уникальные строки
 					printf("%13s |", name[x]);
 					//счёт
 					printf(" %i | %i | %i |", i - 1, pobed[x], i - pobed[x] - 1); // И | В | П
-					printf(" %+2i - -%2i = %-3i ", sumpobed[x], sumporaj[x], sumpobed[x] - sumporaj[x]); // +/- |
+					printf(" %+11i / -%-10i |", sumpobed[x], sumporaj[x]); // +/- |
+
+					printf(" %3i/%4i/%3i/%3i %18s", sumpobed[x] - sumporaj[x], sredkolvo[x], minkolvo[x], maxkolvo[x], ""); // +/- |
 
 					printf("|   %1i   |\n", mesto[x]);
 				}
@@ -181,17 +220,21 @@ void main() {
 			//
 			//
 			else {
-				printf("Вывести список (Вывод в обратном порядке)\n"); //общее количество очков, поражения
+				printf("Вывести результирующую таблицу (Вывод в обратном порядке)\n"); //общее количество очков, поражения
+
 
 				printf("Имя участника ");
-
-				printf("| И | В | П | %9s%6s ", "+/-", ""); //выравнивание 1 столбца
+				// игр | выиграно | проиграно | КОЭФФИЦИНЕНТ РАСЧЕТА СУММЫ ОЧКОВ ( ОТНОШЕНИЕ ВЫИГРЫШ/ПРОИГРЫШ )
+				// ОБЩ, СРЕД, МИН, МАКС КОЛИЧЕСТВО ОЧКОВ
+				printf("| И | В | П | %9s | %9s ", "Отношение выигрыш/проигыш", "Общ/Сред/Мин/Макс количество очков"); //выравнивание 1 столбца
 				printf("| Место |"); printf("\n"); //шапка
-				for (int x = i-1; x >= 0; x--) { //уникальные строки
+				for (int x = i - 1; x >= 0; x--) { //уникальные строки
 					printf("%13s |", name[x]);
 					//счёт
 					printf(" %i | %i | %i |", i - 1, pobed[x], i - pobed[x] - 1); // И | В | П
-					printf(" %+2i - -%2i = %-3i ", sumpobed[x], sumporaj[x], sumpobed[x] - sumporaj[x]); // +/- |
+					printf(" %+11i / -%-10i |", sumpobed[x], sumporaj[x]); // +/- |
+
+					printf(" %3i/%4i/%3i/%3i %18s", sumpobed[x] - sumporaj[x], sredkolvo[x], minkolvo[x], maxkolvo[x], ""); // +/- |
 
 					printf("|   %1i   |\n", mesto[x]);
 				}
@@ -227,3 +270,11 @@ int clrscr()
 	system("@cls||clear");
 	return 1;
 }
+
+// СОРТИРОВАТЬ ПО УБЫВАНИЮ
+// ПОИСК ПО КРИТЕРИЮ 
+// СОЗДАТЬ СПИСОК ИЛИ ПОДМАССИВ, УДОВЛЕТВОРЯЮЩИЙ КРИТЕРИЯМ ПОЛЬЗОВАТЕЛЯ
+// ЗАПОЛНЕНИЕ НОВЫМИ ЗНАЧЕНИЯМИ
+
+
+// ФУНКЦИИ ПЕРЕД MAIN
