@@ -261,8 +261,17 @@ void main() {
 	}
 
 
+		// освобождение памяти
+	for (int i = 0; i < 4; i++) 
+	{
+		free(name[i]);
+	}
+	free(name);
 	free(pobed);
 	free(mesto);
+	free(minkolvo);
+	free(maxkolvo);
+	free(sredkolvo);
 }
 
 int clrscr()
@@ -271,10 +280,8 @@ int clrscr()
 	return 1;
 }
 
-// СОРТИРОВАТЬ ПО УБЫВАНИЮ
 // ПОИСК ПО КРИТЕРИЮ 
 // СОЗДАТЬ СПИСОК ИЛИ ПОДМАССИВ, УДОВЛЕТВОРЯЮЩИЙ КРИТЕРИЯМ ПОЛЬЗОВАТЕЛЯ
 // ЗАПОЛНЕНИЕ НОВЫМИ ЗНАЧЕНИЯМИ
-
 
 // ФУНКЦИИ ПЕРЕД MAIN
