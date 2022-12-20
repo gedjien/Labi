@@ -6,10 +6,9 @@
 #include <math.h>
 #include <stdlib.h>
 
-void clrscr()
-{
-	system("@cls||clear");
-}
+int clrscr();
+
+
 
 void main() {
 
@@ -22,19 +21,40 @@ void main() {
 
 	FILE *file;
 	file = fopen("fscanf.txt", "r"); //открытие файла
-	fscanf(file, "%i", &r);
+	while (!feof(file)) {
+		if (fgetc(file) == '\n')
+			r++;
+	}
 
-	struct player {
-		char name[20];
-		unsigned qty[20]; //максимум 20 игроков
-	};
-	struct player igrok[20];
-	
-	//чтение списка данных из файла
-	while (fscanf(file, "%s", igrok[i].name) != EOF) {
-		for (int x = 0; x < r; x++) { fscanf(file, "%u", &(igrok[i].qty[x])); }
+	printf("%i", r);
+
+	fseek(file, 0, SEEK_SET);
+
+	char **name = (char**)calloc(r, sizeof(char*));// указатель на массив имён
+
+	for (int q = 0; q < r; q++) {
+		name[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
+		strcpy(name[q], "undefined"); //заполнение значениями
+	}
+
+	int *a = (int*)malloc(pow(r, 2) * sizeof(int));// указатель на массив значений
+	int *b = (int*)malloc(pow(r, 2) * sizeof(int));// указатель на транспонированный массив значений
+
+	//определение динамического массива данными из файла
+
+	//чтение/заполнение значений
+	while (fscanf(file, "%s", name[i]) != EOF) { //чтение имён
+		for (int x = 0; x < r; x++) { fscanf(file, "%u", &(*(a + i * r + x))); } //чтение чисел
 		i++;
 	}
+
+	// Транспонируем значения во массив
+	for (int q = 0; q < r; q++) {
+		for (int j = 0; j < r; j++) {
+			*(b + j * r + q) = *(a + q * r + j);
+		}
+	}
+
 	fclose(file); //закрытие файла
 
 
@@ -45,7 +65,7 @@ void main() {
 		int sm_pobed = 0;
 		for (int x = 0; x < i; x++)  // цикл по столбцам
 		{
-			if (igrok[q].qty[x] > igrok[x].qty[q]) sm_pobed += 1;
+			if (*(a + q * r + x) > *(b + q * r + x)) sm_pobed += 1;
 		}
 		pobed[q] = sm_pobed;
 	}
@@ -88,13 +108,13 @@ void main() {
 
 
 				for (int x = 0; x < i; x++) { //уникальные строки
-					printf("%5i | %13s |", x + 1, igrok[x].name);
+					printf("%5i | %13s |", x + 1, name[x]);
 
 					//счёт
 					for (int q = 0; q < i; q++) {
 						//в случае, если столбец игрока пересекается с своей же строкой
-						if (igrok[x].qty[q] == 0 & igrok[q].qty[x] == 0) { printf("       |"); continue; }
-						printf(" %2i:%-2i |", igrok[x].qty[q], igrok[q].qty[x]);
+						if (*(a + x* r + q) == 0 & *(b + x * r + q) == 0) { printf("       |"); continue; }
+						printf(" %2i:%-2i |", *(a + x * r + q), *(b + x * r + q));
 					}
 
 					printf("   %i   |   %i   |\n", pobed[x], mesto[x]);
@@ -114,13 +134,13 @@ void main() {
 
 
 				for (int x = i - 1; x >= 0; x--) { //уникальные строки
-					printf("%5i | %13s |", x + 1, igrok[x].name);
+					printf("%5i | %13s |", x + 1, name[x]);
 
 					//счёт
 					for (int q = i - 1; q >= 0; q--) {
 						//в случае, если столбец игрока пересекается с своей же строкой
-						if (igrok[x].qty[q] == 0 & igrok[q].qty[x] == 0) { printf("       |"); continue; }
-						printf(" %2i:%-2i |", igrok[x].qty[q], igrok[q].qty[x]);
+						if (*(a + x * r + q) == 0 & *(b + x * r + q) == 0) { printf("       |"); continue; }
+						printf(" %2i:%-2i |", *(a + x * r + q), *(b + x * r + q));
 					}
 
 					printf("   %i   |   %i   |\n", pobed[x], mesto[x]);
@@ -138,8 +158,8 @@ void main() {
 				sumpobed[q] = 0;
 				sumporaj[q] = 0;
 				for (int x = 0; x < i; x++) {
-					sumpobed[q] += igrok[q].qty[x];
-					sumporaj[q] += igrok[x].qty[q];
+					sumpobed[q] += *(a + q * r + x);
+					sumporaj[q] += *(b + q * r + x);
 				}
 			}
 
@@ -151,7 +171,7 @@ void main() {
 				printf("| И | В | П | %9s%6s ", "+/-", ""); //выравнивание 1 столбца
 				printf("| Место |"); printf("\n"); //шапка
 				for (int x = 0; x < i; x++) { //уникальные строки
-					printf("%13s |", igrok[x].name);
+					printf("%13s |", name[x]);
 					//счёт
 					printf(" %i | %i | %i |", i - 1, pobed[x], i - pobed[x] - 1); // И | В | П
 					printf(" %+2i - -%2i = %-3i ", sumpobed[x], sumporaj[x], sumpobed[x] - sumporaj[x]); // +/- |
@@ -170,7 +190,7 @@ void main() {
 				printf("| И | В | П | %9s%6s ", "+/-", ""); //выравнивание 1 столбца
 				printf("| Место |"); printf("\n"); //шапка
 				for (int x = i-1; x >= 0; x--) { //уникальные строки
-					printf("%13s |", igrok[x].name);
+					printf("%13s |", name[x]);
 					//счёт
 					printf(" %i | %i | %i |", i - 1, pobed[x], i - pobed[x] - 1); // И | В | П
 					printf(" %+2i - -%2i = %-3i ", sumpobed[x], sumporaj[x], sumpobed[x] - sumporaj[x]); // +/- |
@@ -202,4 +222,10 @@ void main() {
 
 	free(pobed);
 	free(mesto);
+}
+
+int clrscr()
+{
+	system("@cls||clear");
+	return 1;
 }
