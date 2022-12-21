@@ -7,12 +7,12 @@
 #include <stdlib.h>
 
 int clrscr();
-int poisk_pobed(int , int , int *, int *, int *);
-int poisk_mesto(int , int , int *, int *, int *, int *);
-int poisk_max_ball(int , int , int *, int *);
-int poisk_sred_ball(int , int , int *, int *);
-int poisk_min_ball(int , int , int *, int *, int *);
-int transponir(int , int *, int*);
+int poisk_pobed(int, int, int *, int *, int *);
+int poisk_mesto(int, int, int *, int *, int *, int *);
+int poisk_max_ball(int, int, int *, int *);
+int poisk_sred_ball(int, int, int *, int *);
+int poisk_min_ball(int, int, int *, int *, int *);
+int transponir(int, int *, int*);
 int ishod_tablica(int, int, int, int *, int *, int **);
 int result_tablica(int, int, int, int *, int *, int **, int *, int *, int *, int *, int *);
 int show_menu(int, int, int *, int *, int **);
