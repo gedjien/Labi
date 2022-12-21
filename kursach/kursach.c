@@ -31,14 +31,15 @@ void main() {
 
 	char file_name[] = "fscanf.txt";
 	puts("Введите название .txt файла (Без расширения): "); scanf("%s", &file_name); strcat(file_name, ".txt");
-	file = fopen(file_name, "r"); //открытие файла с списком игроков
-	if (!file) {
+	file = fopen(file_name, "r"); //открытие файла с данными
+	if (!file) { //проверка на существование файла
 		puts("Файл не обнаружен.");
 		system("pause");
 		exit(EXIT_SUCCESS);
 	}
-
-	while (!feof(file)) {
+	
+	//определение количества строк в файле
+	while (!feof(file)) { 
 		if (fgetc(file) == '\n')
 			r++;
 	}
@@ -69,6 +70,7 @@ void main() {
 	//транспонирование массива
 	transponir(r, a, b);
 
+	//вызов таблицы
 	show_menu(i ,r, a, b, name);
 
 	// освобождение памяти
