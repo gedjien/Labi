@@ -7,15 +7,15 @@
 #include <stdlib.h>
 
 int clrscr();
-int poisk_pobed(int i, int r, int *a, int *b, int *pobed);
-int poisk_mesto(int i, int r, int *a, int *b, int *mesto, int *pobed);
-int poisk_max_ball(int i, int r, int *a, int *maxkolvo);
-int poisk_sred_ball(int i, int r, int *a, int *sredkolvo);
-int poisk_min_ball(int i, int r, int *a, int *maxkolvo, int *minkolvo);
-int transponir(int r, int *a, int*b);
-int ishod_tablica(int i, int r, int sortirovka, int *a, int *b, int **name);
-int result_tablica(int i, int r, int sortirovka, int *a, int *b, int **name, int *pobed, int *mesto, int *sredkolvo, int *minkolvo, int *maxkolvo);
-int show_menu(int i, int r, int *a, int *b, int **name);
+int poisk_pobed(int , int , int *, int *, int *);
+int poisk_mesto(int , int , int *, int *, int *, int *);
+int poisk_max_ball(int , int , int *, int *);
+int poisk_sred_ball(int , int , int *, int *);
+int poisk_min_ball(int , int , int *, int *, int *);
+int transponir(int , int *, int*);
+int ishod_tablica(int, int, int, int *, int *, int **);
+int result_tablica(int, int, int, int *, int *, int **, int *, int *, int *, int *, int *);
+int show_menu(int, int, int *, int *, int **);
 
 
 void main() {
@@ -28,13 +28,21 @@ void main() {
 	int i = 0, r = 0;
 
 	FILE *file;
-	file = fopen("fscanf.txt", "r"); //открытие файла
+
+	char file_name[] = "fscanf.txt";
+	puts("Введите название .txt файла (Без расширения): "); scanf("%s", &file_name); strcat(file_name, ".txt");
+	file = fopen(file_name, "r"); //открытие файла с списком игроков
+	if (!file) {
+		puts("Файл не обнаружен.");
+		system("pause");
+		exit(EXIT_SUCCESS);
+	}
+
 	while (!feof(file)) {
 		if (fgetc(file) == '\n')
 			r++;
 	}
 
-	printf("%i", r);
 
 	fseek(file, 0, SEEK_SET); //возвращение в 0 строку файла
 
@@ -202,6 +210,7 @@ int ishod_tablica(int i, int r, int sortirovka, int *a, int *b, int **name) {
 			printf("\n");
 		}
 	}
+	return 1;
 }
 
 int result_tablica(int i, int r, int sortirovka, int *a, int *b, int **name, int *pobed, int *mesto, int *sredkolvo, int *minkolvo, int *maxkolvo) {
@@ -261,6 +270,7 @@ int result_tablica(int i, int r, int sortirovka, int *a, int *b, int **name, int
 	}
 	//
 	//
+	return 1;
 }
 
 int show_menu(int i, int r, int *a, int *b, int **name) {
@@ -325,4 +335,5 @@ int show_menu(int i, int r, int *a, int *b, int **name) {
 	free(minkolvo);
 	free(maxkolvo);
 	free(sredkolvo);
+	return 1;
 }
