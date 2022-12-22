@@ -397,25 +397,36 @@ int sort_buble(int*ptrarr, int n, char **name) {
 	return 1;
 }
 
-int sort_place(int i, int r, int *mesto, char **name) {
+int sort_place(int i, int r, int *mesto, char **name, int sortirovka) {
 	int* mesto_sorted = (int*)malloc(i * sizeof(int));
 	for (int q = 0; q < r; q++) {
 		mesto_sorted[q] = mesto[q];
 	}
-	printf("До сортировки\n");
+	/*printf("До сортировки\n");
 	printf("Имя игрока | Занятое место\n");
 	for (int q = 0; q < r; q++) {
 		printf("%10s | %i \n", name[q], mesto_sorted[q]);
+	}	printf("После сортировки\n");
+*/
+
+		sort_buble(mesto_sorted, r, name);
+
+	if (sortirovka == 0) {
+		printf("Имя игрока | Занятое место (Вывод обычный)\n");
+		for (int q = 0; q < r; q++) {
+			printf("%10s | %i \n", name[q], mesto_sorted[q]);
+		}
+	}
+	
+	else{
+		printf("Имя игрока | Занятое место (Вывод в обратном порядке)\n");
+
+		for (int q = r-1; q >= 0; q--) {
+			printf("%10s | %i \n", name[q], mesto_sorted[q]);
+		}
 	}
 
-	sort_buble(mesto_sorted, r, name);
-	printf("После сортировки\n");
-	printf("Имя игрока | Занятое место\n");
-	for (int q = 0; q < r; q++) {
-		printf("%10s | %i \n", name[q], mesto_sorted[q]);
-	}
 	return 1;
-
 }
 
 int show_menu(int i, int r, int* a, int* b, char** name) {
@@ -455,14 +466,15 @@ int show_menu(int i, int r, int* a, int* b, char** name) {
 
 	int spos_vivoda = 0; //переменная для вывода по умолчанию
 	int last_choose = 1; //переменная последнего выбранного пункта
+	int case3_count = 0;
 
 	while (1) {
-		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Способ вывода (обычный/в обратном порядке)\n4. Изменить имя пользователя\n5. Найти команду по фильтру\n6. Отсортировать игроков по месту\n7. Выход\n");
+		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Отсортировать игроков по месту\n4. Изменить имя пользователя\n5. Найти команду по фильтру\n6. Способ вывода (обычный/в обратном порядке)\n7. Выход\n");
 
 		int menu = 0;
 		printf("Выбор пункта: ");
 		scanf("%i", &menu);
-		if (menu == 1 | menu == 2) { last_choose = menu; }
+		if (menu == 1 | menu == 2 | menu == 3) { last_choose = menu; }
 		switch (menu) {
 		case 1:
 			//
@@ -476,11 +488,12 @@ int show_menu(int i, int r, int* a, int* b, char** name) {
 			result_tablica(i, r, spos_vivoda, a, b, name, pobed, mesto, sredkolvo, minkolvo, maxkolvo, sumporaj, sumpobed);
 			break;
 		case 3:
-			if (spos_vivoda == 0) { spos_vivoda = 1; printf("Вывод в обратном порядке\n"); }
-			else { spos_vivoda = 0; printf("Вывод обычный\n"); }
-
-			if (last_choose == 1) { goto case1; }
-			else { goto case2; }
+		case3:
+			clrscr();
+			//
+			sort_place(i, r, mesto, name, spos_vivoda);
+			//
+			printf("\n\n");
 			break;
 		case 4:
 			clrscr();
@@ -505,11 +518,14 @@ int show_menu(int i, int r, int* a, int* b, char** name) {
 			printf("\n\n");
 			break;
 		case 6:
-			clrscr();
-			//
-			sort_place(i, r, mesto, name);
-			//
-			printf("\n\n");
+			if (spos_vivoda == 0) { spos_vivoda = 1; printf("Вывод в обратном порядке\n"); }
+			else { spos_vivoda = 0; printf("Вывод обычный\n"); }
+
+			switch (last_choose) {
+			case 1: goto case1; break;
+			case 2: goto case2; break;
+			case 3: goto case3; break;
+			}
 			break;
 		case 7:
 			clrscr();
