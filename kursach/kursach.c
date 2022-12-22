@@ -37,9 +37,9 @@ void main() {
 		system("pause");
 		exit(EXIT_SUCCESS);
 	}
-	
+
 	//определение количества строк в файле
-	while (!feof(file)) { 
+	while (!feof(file)) {
 		if (fgetc(file) == '\n')
 			r++;
 	}
@@ -71,7 +71,7 @@ void main() {
 	transponir(r, a, b);
 
 	//вызов таблицы
-	show_menu(i ,r, a, b, name);
+	show_menu(i, r, a, b, name);
 
 	// освобождение памяти
 	for (int i = 0; i < r; i++)
