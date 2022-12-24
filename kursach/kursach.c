@@ -7,29 +7,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 int clrscr();
-int poisk_pobed(int, int, int*, int*, int*);
-int poisk_mesto(int, int, int*, int*, int*, int*);
-int poisk_max_ball(int, int, int*, int*);
-int poisk_sred_ball(int, int, int*, int*);
-int poisk_min_ball(int, int, int*, int*, int*);
-int transponir(int, int*, int*);
-int ishod_tablica(int, int, int, int*, int*, char**);
-int result_tablica(int, int, int, int*, int*, char**, int*, int*, int*, int*, int*);
-int find_filter(int, int*, int*, char**);
-int sort_buble(int*, int, char**);
-int sort_place(int i, int r, int *, char **);
-int show_menu(int, int, int*, int*, char**);
+int ishod_tablica(int i, int r, int sortirovka, int* a, char** name);
+int result_tablica(int i, int r, int sortirovka, int* a, char** name, int* pobed, int* mesto, int* sredkolvo, int* minkolvo, int* maxkolvo, int *sumporaj, int *sumpobed);
+int find_filter(int r, int *sumpobed, int *sumporaj, char **name);
+int sort_buble(int *ptrarr, int n, char **name);
+int sort_place(int i, int r, int *mesto, char **name, int sortirovka);
+int result_tab_var_full(int i, int r, int *a, int* pobed, int* mesto, int* maxkolvo, int* sredkolvo, int* minkolvo, int* sumpobed, int* sumporaj);
+int add_new_player(int i, int r, int *a, char **name, int *temp_msv, char **temp_name);
+int show_menu(int i, int r, int* a, char** name);
+int read_file(FILE* file, int i, int r, int *a, char **name);
 
-
-void main() {
+int main() {
 
 	//SetConsoleCP(1251);
 	//SetConsoleOutputCP(1251);
 
 	setlocale(LC_ALL, "RUS");
 
-	int i = 0, r = 1;
+	int i = 0, r = 1; //колонки, строки
 
 	FILE* file;
 
@@ -48,51 +45,28 @@ void main() {
 			r++;
 	}
 
-
 	fseek(file, 0, SEEK_SET); //возвращение в 0 строку файла
 
 	char** name = (char**)calloc(r, sizeof(char*));// указатель на массив имён
-
 	for (int q = 0; q < r; q++) {
 		name[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
 		strcpy(name[q], "undefined"); //заполнение значениями
 	}
 
-	int* a = (int*)malloc(pow(r, 2) * sizeof(int));// указатель на массив значений
-	int* b = (int*)malloc(pow(r, 2) * sizeof(int));// указатель на транспонированный массив значений
+	int* massiv_znach = (int*)malloc(pow(r, 2) * sizeof(int));// указатель на массив значений
 
-	//определение динамического массива данными из файла
-
-	//чтение/заполнение значений
-	while (!feof(file))
-	{ // чтение имён
-		fscanf(file, "%s", name[i]);
-		//printf("%s ", name[i]);
-		for (int x = 0; x < r; x++)
-		{
-			fscanf(file, "%u", &(*(a + i * r + x)));
-			//printf("%i ", *(a + i * r + x));
-		} // чтение чисел
-		i++;
-		//printf("\n");
-	}
+	i = read_file(file, i, r, massiv_znach, name); //определение динамического массива данными из файла
 
 	fclose(file); //закрытие файла
 
-	//транспонирование массива
-	transponir(r, a, b);
-
-	//вызов таблицы
-	show_menu(i, r, a, b, name);
+	//вызов меню
+	show_menu(i, r, massiv_znach, name);
 
 	// освобождение памяти
-	for (int i = 0; i < r; i++)
-	{
-		free(name[i]);
-	}
 	free(name);
-	free(a);
-	free(b);
+	free(massiv_znach);
+
+	return 1;
 }
 
 int clrscr()
@@ -101,91 +75,7 @@ int clrscr()
 	return 1;
 }
 
-int poisk_pobed(int i, int r, int* a, int* b, int* pobed) {
-	for (int q = 0; q < i; q++)  // цикл по строкам
-	{
-		int sm_pobed = 0;
-		for (int x = 0; x < i; x++)  // цикл по столбцам
-		{
-			if (*(a + q * r + x) > *(b + q * r + x)) sm_pobed += 1;
-		}
-		pobed[q] = sm_pobed;
-	}
-	return 1;
-}
-
-int poisk_mesto(int i, int r, int* a, int* b, int* mesto, int* pobed) {
-	for (int x = 0; x < i; x++) {
-		mesto[x] = 0;
-		for (int s = 0; s < i; s++) {
-			if (pobed[x] > pobed[s]) { mesto[x] += 1; }
-		}
-		mesto[x] = i - mesto[x];
-	}
-
-	int odinak = 0;
-
-	for (int x = 0; x < i; x++) {
-		mesto[x] = 0;
-		for (int s = 0; s < i; s++) {
-			if (pobed[x] > pobed[s]) { mesto[x] += 1; }
-		}
-		mesto[x] = i - mesto[x];
-	}
-	return 1;
-}
-
-int poisk_max_ball(int i, int r, int* a, int* maxkolvo) {
-	for (int q = 0; q < i; q++)  // цикл по строкам
-	{
-		int max_ochkov = 0;
-		for (int x = 0; x < i; x++)  // цикл по столбцам
-		{
-			if (max_ochkov < *(a + q * r + x)) max_ochkov = *(a + q * r + x);
-		}
-		maxkolvo[q] = max_ochkov;
-	}
-	return 1;
-}
-
-int poisk_sred_ball(int i, int r, int* a, int* sredkolvo) {
-	for (int q = 0; q < i; q++)  // цикл по строкам
-	{
-		int sred_ochkov = 0;
-		for (int x = 0; x < i; x++)  // цикл по столбцам
-		{
-			sred_ochkov += *(a + q * r + x);
-		}
-		sredkolvo[q] = sred_ochkov / (i - 1);
-	}
-	return 1;
-}
-
-int poisk_min_ball(int i, int r, int* a, int* maxkolvo, int* minkolvo) {
-	for (int q = 0; q < i; q++)  // цикл по строкам
-	{
-		minkolvo[q] = maxkolvo[q];
-		for (int x = 0; x < i; x++)  // цикл по столбцам
-		{
-			if (*(a + q * r + x) == 0) { continue; }
-			if (*(a + q * r + x) < maxkolvo[q])
-				minkolvo[q] = *(a + q * r + x);
-		}
-	}
-	return 1;
-}
-
-int transponir(int r, int* a, int* b) {
-	// Транспонируем значения во массив
-	for (int q = 0; q < r; q++) {
-		for (int j = 0; j < r; j++) {
-			*(b + j * r + q) = *(a + q * r + j);
-		}
-	}
-	return 1;
-}
-
-int ishod_tablica(int i, int r, int sortirovka, int* a, int* b, char** name) {
+int ishod_tablica(int i, int r, int sortirovka, int* a, char** name) {
 	if (sortirovka == 0) {
 		printf("Вывести исходную таблицу (Вывод обычный)\n");
 		printf("Номер | Имя участника |");
@@ -202,8 +92,8 @@ int ishod_tablica(int i, int r, int sortirovka, int* a, int* b, char** name) {
 			//счёт
 			for (int q = 0; q < i; q++) {
 				//в случае, если столбец игрока пересекается с своей же строкой
-				if (*(a + x * r + q) == 0 & *(b + x * r + q) == 0) { printf("       |"); continue; }
-				printf(" %2i:%-2i |", *(a + x * r + q), *(b + x * r + q));
+				if (*(a + x * r + q) == 0 & *(a + q * r + x) == 0) { printf("       |"); continue; }
+				printf(" %2i:%-2i |", *(a + x * r + q), *(a + q * r + x));
 			}
 
 			printf("\n");
@@ -227,8 +117,8 @@ int ishod_tablica(int i, int r, int sortirovka, int* a, int* b, char** name) {
 			//счёт
 			for (int q = i - 1; q >= 0; q--) {
 				//в случае, если столбец игрока пересекается с своей же строкой
-				if (*(a + x * r + q) == 0 & *(b + x * r + q) == 0) { printf("       |"); continue; }
-				printf(" %2i:%-2i |", *(a + x * r + q), *(b + x * r + q));
+				if (*(a + x * r + q) == 0 & *(a + q * r + x) == 0) { printf("       |"); continue; }
+				printf(" %2i:%-2i |", *(a + x * r + q), *(a + q * r + x));
 			}
 
 			printf("\n");
@@ -237,7 +127,7 @@ int ishod_tablica(int i, int r, int sortirovka, int* a, int* b, char** name) {
 	return 1;
 }
 
-int result_tablica(int i, int r, int sortirovka, int* a, int* b, char** name, int* pobed, int* mesto, int* sredkolvo, int* minkolvo, int* maxkolvo, int *sumporaj, int *sumpobed) {
+int result_tablica(int i, int r, int sortirovka, int* a, char** name, int* pobed, int* mesto, int* sredkolvo, int* minkolvo, int* maxkolvo, int *sumporaj, int *sumpobed) {
 
 	if (sortirovka == 0) {
 		printf("Вывести результирующую таблицу (Вывод обычный)\n"); //общее количество очков, поражения
@@ -377,7 +267,7 @@ int find_filter(int r, int *sumpobed, int *sumporaj, char **name) {
 	return 1;
 }
 
-int sort_buble(int*ptrarr, int n, char **name) {
+int sort_buble(int *ptrarr, int n, char **name) {
 	for (int j = 1; j < n; j++) {
 		for (int i = 0; i < n - 1; i++) {
 			if (ptrarr[i] > ptrarr[i + 1]) {
@@ -387,8 +277,8 @@ int sort_buble(int*ptrarr, int n, char **name) {
 
 				char temp_name[70];
 				strcpy(temp_name, name[i]);
-				strcpy(name[i], name[i+1]);
-				strcpy(name[i+1], temp_name);
+				strcpy(name[i], name[i + 1]);
+				strcpy(name[i + 1], temp_name);
 
 			}
 		}
@@ -398,6 +288,14 @@ int sort_buble(int*ptrarr, int n, char **name) {
 }
 
 int sort_place(int i, int r, int *mesto, char **name, int sortirovka) {
+
+	char** temp_name = (char**)calloc(r, sizeof(char*));// указатель на массив имён
+
+	for (int q = 0; q < r; q++) {
+		temp_name[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
+		strcpy(temp_name[q], name[q]); //заполнение значениями
+	}
+
 	int* mesto_sorted = (int*)malloc(i * sizeof(int));
 	for (int q = 0; q < r; q++) {
 		mesto_sorted[q] = mesto[q];
@@ -409,19 +307,19 @@ int sort_place(int i, int r, int *mesto, char **name, int sortirovka) {
 	}	printf("После сортировки\n");
 */
 
-		sort_buble(mesto_sorted, r, name);
+	sort_buble(mesto_sorted, r, temp_name);
 
 	if (sortirovka == 0) {
 		printf("Имя игрока | Занятое место (Вывод обычный)\n");
 		for (int q = 0; q < r; q++) {
-			printf("%10s | %i \n", name[q], mesto_sorted[q]);
+			printf("%10s | %i \n", temp_name[q], mesto_sorted[q]);
 		}
 	}
-	
-	else{
+
+	else {
 		printf("Имя игрока | Занятое место (Вывод в обратном порядке)\n");
 
-		for (int q = r-1; q >= 0; q--) {
+		for (int q = r - 1; q >= 0; q--) {
 			printf("%10s | %i \n", name[q], mesto_sorted[q]);
 		}
 	}
@@ -429,7 +327,131 @@ int sort_place(int i, int r, int *mesto, char **name, int sortirovka) {
 	return 1;
 }
 
-int show_menu(int i, int r, int* a, int* b, char** name) {
+int result_tab_var_full(int i, int r, int *a, int* pobed, int* mesto, int* maxkolvo, int* sredkolvo, int* minkolvo, int* sumpobed, int* sumporaj) {
+
+	//вычисление и заполнение массива побед через условие 	//счёт количества побед
+	for (int q = 0; q < i; q++)  // цикл по строкам
+	{
+		int sm_pobed = 0;
+		for (int x = 0; x < i; x++)  // цикл по столбцам
+		{
+			if (*(a + q * r + x) > *(a + x * r + q)) sm_pobed += 1;
+		}
+		pobed[q] = sm_pobed;
+	}
+	//
+
+	//вычисление и заполнение массива место //вычисление занятого места
+	for (int x = 0; x < i; x++) {
+		mesto[x] = 0;
+		for (int s = 0; s < i; s++) {
+			if (pobed[x] > pobed[s]) { mesto[x] += 1; }
+		}
+		mesto[x] = i - mesto[x];
+	}
+	int odinak = 0;
+	for (int x = 0; x < i; x++) {
+		mesto[x] = 0;
+		for (int s = 0; s < i; s++) {
+			if (pobed[x] > pobed[s]) { mesto[x] += 1; }
+		}
+		mesto[x] = i - mesto[x];
+	}
+	//
+
+	//поиск макс/сред/мин знач
+	//вычисление и заполнение массива максимального количества очков
+	for (int q = 0; q < i; q++)  // цикл по строкам
+	{
+		int max_ochkov = 0;
+		for (int x = 0; x < i; x++)  // цикл по столбцам
+		{
+			if (max_ochkov < *(a + q * r + x)) max_ochkov = *(a + q * r + x);
+		}
+		maxkolvo[q] = max_ochkov;
+	}
+	//
+
+	//вычисление и заполнение массива среднего количества очков
+	for (int q = 0; q < i; q++)  // цикл по строкам
+	{
+		int sred_ochkov = 0;
+		for (int x = 0; x < i; x++)  // цикл по столбцам
+		{
+			sred_ochkov += *(a + q * r + x);
+		}
+		sredkolvo[q] = sred_ochkov / (i - 1);
+	}
+	//
+
+	//вычисление и заполнение массива минимального количества очков
+	for (int q = 0; q < i; q++)  // цикл по строкам
+	{
+		minkolvo[q] = maxkolvo[q];
+		for (int x = 0; x < i; x++)  // цикл по столбцам
+		{
+			if (*(a + q * r + x) == 0) { continue; }
+			if (*(a + q * r + x) < maxkolvo[q])
+				minkolvo[q] = *(a + q * r + x);
+		}
+	}
+	//
+
+	//вычисление и заполнение массивы сумма побед/сумма поражений
+	for (int q = 0; q < i; q++) {
+		sumpobed[q] = 0;
+		sumporaj[q] = 0;
+		for (int x = 0; x < i; x++) {
+			sumpobed[q] += *(a + q * r + x);
+			sumporaj[q] += *(a + x * r + q);
+		}
+	}
+
+	//проверка на одинаковое место
+	for (int x = 0; x < i - 1; x++) {
+		//for (int s = 0; s < i; s++) {
+		if (pobed[x] == pobed[x + 1]) { if (sumpobed[x] > sumpobed[x + 1]) mesto[x] = mesto[x] - 1; else mesto[x + 1] = mesto[x + 1] - 1; x = 0; break; }
+		//}
+	}
+
+
+	return 1;
+}
+
+int add_new_player(int i, int r, int *a, char **name, int *temp_msv, char **temp_name) {
+	int counter = 0;
+
+	for (int q = 0; q < r; q++) {
+		for (int x = 0; x < r; x++) {
+			if (q == r - 1 & x == r - 1) { *(a + q * r + x) = 0; continue; }
+			if (q == r - 1) {
+				printf("Введите количество очков против игрока %i (%s): ", x, temp_name[x]);
+				scanf("%i", &(*(a + q * r + x)));
+				continue;
+			}
+			if (x == r - 1) {
+				printf("Введите количество очков игрока %i (%s) против нового игрока: ", q, temp_name[q]);
+				scanf("%i", &(*(a + q * r + x)));
+				counter++;
+				continue;
+			}
+			*(a + q * r + x) = *(temp_msv + q * r + x - counter);
+		}
+	}
+
+	for (int q = 0; q < r; q++) {
+		name[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
+		if (q == r - 1) { puts("Введите имя нового игрока"); scanf("%s", name[q]); continue; };
+		strcpy(name[q], temp_name[q]); //заполнение значениями
+	}
+
+	return 1;
+}
+
+int show_menu(int i, int r, int* a, char** name) {
+newplayer:
+
+	//переменные для результирубщей таблицы/сортировки
 	int* pobed = (int*)malloc(i * sizeof(int));
 	int* mesto = (int*)malloc(i * sizeof(int));
 	int* maxkolvo = (int*)malloc(i * sizeof(int));
@@ -438,38 +460,13 @@ int show_menu(int i, int r, int* a, int* b, char** name) {
 	int* sumpobed = (int*)malloc(i * sizeof(int));
 	int* sumporaj = (int*)malloc(i * sizeof(int));
 
-	for (int q = 0; q < i; q++) {
-		sumpobed[q] = 0;
-		sumporaj[q] = 0;
-		for (int x = 0; x < i; x++) {
-			sumpobed[q] += *(a + q * r + x);
-			sumporaj[q] += *(b + q * r + x);
-		}
-	}
+	result_tab_var_full(i, r, a, pobed, mesto, maxkolvo, sredkolvo, minkolvo, sumpobed, sumporaj);
 
-	//счёт количества побед
-	poisk_pobed(i, r, a, b, pobed);
-
-	//вычисление занятого места
-	poisk_mesto(i, r, a, b, mesto, pobed);
-
-	for (int x = 0; x < i - 1; x++) {
-		//for (int s = 0; s < i; s++) {
-		if (pobed[x] == pobed[x + 1]) { if (sumpobed[x] > sumpobed[x + 1]) mesto[x] = mesto[x] - 1; else mesto[x + 1] = mesto[x + 1] - 1; x = 0; break; }
-		//}
-	}
-
-	//поиск макс/мин/сред знач
-	poisk_max_ball(i, r, a, maxkolvo);
-	poisk_min_ball(i, r, a, maxkolvo, minkolvo);
-	poisk_sred_ball(i, r, a, sredkolvo);
-
-	int spos_vivoda = 0; //переменная для вывода по умолчанию
+	int spos_vivoda = 0; //переменная для способа вывода по умолчанию
 	int last_choose = 1; //переменная последнего выбранного пункта
-	int case3_count = 0;
 
 	while (1) {
-		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Отсортировать игроков по месту\n4. Изменить имя пользователя\n5. Найти команду по фильтру\n6. Способ вывода (обычный/в обратном порядке)\n7. Выход\n");
+		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Отсортировать игроков по месту\n4. Изменить имя игрока\n5. Найти команду по фильтру\n6. Способ вывода (обычный/в обратном порядке)\n7. Добавить нового игрока в конец списка \n0. Выход\n");
 
 		int menu = 0;
 		printf("Выбор пункта: ");
@@ -480,12 +477,12 @@ int show_menu(int i, int r, int* a, int* b, char** name) {
 			//
 		case1:
 			clrscr();
-			ishod_tablica(i, r, spos_vivoda, a, b, name);
+			ishod_tablica(i, r, spos_vivoda, a, name);
 			break;
 		case 2:
 		case2:
 			clrscr();
-			result_tablica(i, r, spos_vivoda, a, b, name, pobed, mesto, sredkolvo, minkolvo, maxkolvo, sumporaj, sumpobed);
+			result_tablica(i, r, spos_vivoda, a, name, pobed, mesto, sredkolvo, minkolvo, maxkolvo, sumporaj, sumpobed);
 			break;
 		case 3:
 		case3:
@@ -529,6 +526,35 @@ int show_menu(int i, int r, int* a, int* b, char** name) {
 			break;
 		case 7:
 			clrscr();
+			r += 1;
+			i += 1;
+			int *temp_msv = (int*)malloc(pow((r - 1), 2) * sizeof(int));
+			for (int q = 0; q < r - 1; q++) {
+				for (int x = 0; x < r - 1; x++) {
+					*(temp_msv + q * (r - 1) + x) = *(a + q * (r - 1) + x);
+				}
+			}
+
+			char** temp_name = (char**)calloc(r - 1, sizeof(char*));// указатель на массив имён
+			for (int q = 0; q < r - 1; q++) {
+				temp_name[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
+				strcpy(temp_name[q], name[q]); //заполнение значениями
+			}
+
+			a = (int*)realloc(a, pow(r, 2) * sizeof(int));
+			free(name);
+			name = (char**)calloc(r, sizeof(char*));// указатель на массив имён
+
+			add_new_player(i, r, a, name, temp_msv, temp_name); //заполнение нового массива
+
+			// освобождение памяти
+			free(temp_name);
+			free(temp_msv);
+
+			goto newplayer;
+			break;
+		case 0:
+			clrscr();
 			printf("Выход\n");
 			exit(EXIT_SUCCESS);
 			break;
@@ -538,6 +564,7 @@ int show_menu(int i, int r, int* a, int* b, char** name) {
 		}
 	}
 
+	// освобождение памяти
 	free(pobed);
 	free(mesto);
 	free(minkolvo);
@@ -547,3 +574,23 @@ int show_menu(int i, int r, int* a, int* b, char** name) {
 	free(sumporaj);
 	return 1;
 }
+
+int read_file(FILE* file, int i, int r, int *a, char **name) {
+	printf("Чтение файла\n");
+	//чтение/заполнение значений
+	while (!feof(file))
+	{ // чтение имён
+		fscanf(file, "%s", name[i]);
+		//printf("%s ", name[i]);
+		for (int x = 0; x < r; x++)
+		{
+			fscanf(file, "%i", &(*(a + i * r + x)));
+			//printf("%i ", *(a + i * r + x));
+		} // чтение чисел
+		i++;
+		//printf("\n");
+	}
+
+	return i;
+}
+
