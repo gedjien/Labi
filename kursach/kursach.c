@@ -19,7 +19,7 @@ int main() {
 	FILE* file;
 
 	char file_name[] = "fscanf.txt";
-	//puts("Введите название .txt файла (Без расширения): "); scanf("%s", &file_name); strcat(file_name, ".txt");
+	puts("Введите название .txt файла (Без расширения): "); scanf("%s", &file_name); strcat(file_name, ".txt");
 	file = fopen(file_name, "r"); //открытие файла с данными
 	if (!file) { //проверка на существование файла
 		puts("Файл не обнаружен.");
@@ -407,7 +407,7 @@ int show_menu(int i, int r, int** b, char** name) {
 		}
 		result_tab_var_full(i, r, b, res_tab_var);
 
-		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Отсортировать игроков по месту\n4. Изменить имя игрока\n5. Найти игрока по фильтру\n6. Добавить нового игрока в конец списка \n7. Перезапись файла \n0. Выход\n");
+		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Отсортировать игроков по месту\n4. Изменить имя игрока\n5. Найти игрока по фильтру\n6. Добавить нового игрока в конец списка \n7. Запись в файл \n0. Выход\n");
 
 		int menu = 0;
 		printf("Выбор пункта: ");
@@ -456,6 +456,7 @@ int show_menu(int i, int r, int** b, char** name) {
 			break;
 		case 6:
 			clrscr();
+
 			r += 1;
 			i += 1;
 			int *temp_msv = (int*)malloc(pow((r - 1), 2) * sizeof(int));
@@ -484,12 +485,15 @@ int show_menu(int i, int r, int** b, char** name) {
 			break;
 		case 7:
 			clrscr();
+
 			puts("Запись в новый файл");
 			char new_file_name[] = "new.txt";
 			puts("Введите название нового .txt файла (Без расширения): "); scanf("%s", &new_file_name); strcat(new_file_name, ".txt");
 
 			write_new_file(r, b, new_file_name, name);
 			puts("Файл записан");
+
+
 			printf("\n\n");
 			break;
 		case 0:
