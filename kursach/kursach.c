@@ -48,12 +48,12 @@ int main() {
 		massiv_znach[q] = (int*)malloc(r * sizeof(int)); //двумерный массив имён
 	}
 
-
 	i = read_file(file, i, r, massiv_znach, name); //определение динамического массива данными из файла
 
+	fclose(file); //закрытие файла
+	
 	show_menu(i, r, massiv_znach, name);
 
-	fclose(file); //закрытие файла
 	// освобождение памяти
 	free(name);
 	free(massiv_znach);
@@ -407,7 +407,7 @@ int show_menu(int i, int r, int** b, char** name) {
 		}
 		result_tab_var_full(i, r, b, res_tab_var);
 
-		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Отсортировать игроков по месту\n4. Изменить имя игрока\n5. Найти игрока по фильтру\n6. Добавить нового игрока в конец списка \n0. Выход\n");
+		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Отсортировать игроков по месту\n4. Изменить имя игрока\n5. Найти игрока по фильтру\n6. Добавить нового игрока в конец списка \n7. Перезапись файла \n0. Выход\n");
 
 		int menu = 0;
 		printf("Выбор пункта: ");
@@ -484,9 +484,12 @@ int show_menu(int i, int r, int** b, char** name) {
 			break;
 		case 7:
 			clrscr();
+			puts("Запись в новый файл");
+			char new_file_name[] = "new.txt";
+			puts("Введите название нового .txt файла (Без расширения): "); scanf("%s", &new_file_name); strcat(new_file_name, ".txt");
 
-			find_filter(r, res_tab_var[5], res_tab_var[6], name);
-
+			write_new_file(r, b, new_file_name, name);
+			puts("Файл записан");
 			printf("\n\n");
 			break;
 		case 0:
@@ -505,6 +508,22 @@ int show_menu(int i, int r, int** b, char** name) {
 	}
 
 	return 1;
+}
+
+int write_new_file(int r, int* b, char* new_file_name, char** name) {
+	FILE* new_file = fopen(new_file_name, "w");
+
+	for (int q = 0; q < r; q++) {
+		fprintf(new_file, "%s ", name[q]);
+		for (int x = 0; x < r; x++)
+		{
+			fprintf(new_file, "%i ", *(b + q * r + x));
+			//printf("%i ", *(a + i * r + x));
+		} // чтение чисел
+		fprintf(new_file, "\n");
+	}
+	fclose(new_file);
+
 }
 
 int read_file(FILE* file, int i, int r, int *a, char **name) {
