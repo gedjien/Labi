@@ -7,6 +7,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+int clrscr();
+int ishod_tablica(int i, int r, int* b, char** name);
+int result_tablica(int i, int r, int** res_tab_var, char** name);
+int result_tab_var_full(int i, int r, int* b, int** res_tab_var);
+int find_filter(int r, int *sumpobed, int *sumporaj, char **name);
+int sort_buble(int *ptrarr, int n, char **name);
+int sort_place(int i, int r, char** name, int* mesto_sorted);
+int add_new_player(int i, int r, int *a, char **name, int *temp_msv, char **temp_name);
+int show_menu(int i, int r, int** b, char** name);
+int write_new_file(int r, int* b, char* new_file_name, char** name);
+int read_file(int i, int r, int *a, char* file_name, char **name);
+
 int main() {
 
 	//SetConsoleCP(1251);
@@ -48,7 +60,7 @@ int main() {
 		massiv_znach[q] = (int*)malloc(r * sizeof(int)); //двумерный массив имён
 	}
 
-	i = read_file(file, i, r, massiv_znach, name); //определение динамического массива данными из файла
+	i = read_file(i, r, massiv_znach, file_name, name); //определение динамического массива данными из файла
 
 	fclose(file); //закрытие файла
 	
@@ -530,7 +542,8 @@ int write_new_file(int r, int* b, char* new_file_name, char** name) {
 
 }
 
-int read_file(FILE* file, int i, int r, int *a, char **name) {
+int read_file(int i, int r, int *a, char* file_name, char **name) {
+	FILE* file = fopen(file_name, "r");
 	printf("Чтение файла\n");
 	//чтение/заполнение значений
 	while (!feof(file))
@@ -545,6 +558,8 @@ int read_file(FILE* file, int i, int r, int *a, char **name) {
 		i++;
 		//printf("\n");
 	}
+
+	fclose(file); //закрытие файла
 
 	return i;
 }
