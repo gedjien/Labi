@@ -29,9 +29,8 @@ int main() {
 	int i = 0, r = 1; //колонки, строки
 
 	FILE* file;
-
 	char file_name[] = "fscanf.txt";
-	puts("Введите название .txt файла (Без расширения): "); scanf("%s", &file_name); strcat(file_name, ".txt");
+	//puts("Введите название .txt файла (Без расширения): "); scanf("%s", &file_name); strcat(file_name, ".txt");
 	file = fopen(file_name, "r"); //открытие файла с данными
 	if (!file) { //проверка на существование файла
 		puts("Файл не обнаружен.");
@@ -44,8 +43,8 @@ int main() {
 		if (fgetc(file) == '\n')
 			r++;
 	}
-
-	fseek(file, 0, SEEK_SET); //возвращение в 0 строку файла
+	//fseek(file, 0, SEEK_SET); //возвращение в 0 строку файла
+	fclose(file); //закрытие файла
 
 	char** name = (char**)calloc(r, sizeof(char*));// указатель на массив имён
 	for (int q = 0; q < r; q++) {
@@ -53,16 +52,14 @@ int main() {
 		strcpy(name[q], "undefined"); //заполнение значениями
 	}
 
-	//int* massiv_znach = (int*)malloc(pow(r, 2) * sizeof(int));// указатель на массив значений
-
 	int** massiv_znach = (int*)malloc(r * sizeof(int));// указатель на массив значений
 	for (int q = 0; q < r; q++) {
 		massiv_znach[q] = (int*)malloc(r * sizeof(int)); //двумерный массив имён
 	}
 
-	i = read_file(i, r, massiv_znach, file_name, name); //определение динамического массива данными из файла
 
-	fclose(file); //закрытие файла
+
+	i = read_file(i, r, massiv_znach, file_name, name); //чтение данных из файла
 	
 	show_menu(i, r, massiv_znach, name);
 
@@ -253,92 +250,97 @@ int result_tab_var_full(int i, int r, int* b, int** res_tab_var) {
 	free(sumporaj);
 }
 
-int find_filter(int r, int *sumpobed, int *sumporaj, char **name) {
-	int sub_menu;
-	printf("1. Найти игрока с максимальным количеством очков\n2. Найти игрока с минимальным количеством очков\n3. Найти игрока с количеством очков больше введённого значения\n4. Найти игрока с количеством очков меньше введённого значения\nВыберите необходимый фильтр: ");
-	scanf("%i", &sub_menu);
-	int max = INT_MIN;
-	int min = INT_MAX;
+int find_filter(int sub_menu, int r, int *sumpobed, int *sumporaj, char **name) {
+	int tmp_index = 0;
 
-	switch (sub_menu)
-	{
-	case 1:
+	if (sub_menu == 1) {
+		int max = INT_MIN;
 		// Найти команду с максимальным количеством очков
 		for (int i = 0; i < r; i++)
 		{
 			if (sumpobed[i] - sumporaj[i] >= max)
 			{
 				max = sumpobed[i] - sumporaj[i];
+				tmp_index = i;
 			}
 		}
-		for (int i = 0; i < r; i++)
-		{
-			if (sumpobed[i] - sumporaj[i] >= max)
-			{
-				printf("\nИгрок %s - кол-во очков %i\n", name[i], sumpobed[i] - sumporaj[i]);
-			}
-		}
+		printf("\nИгрок c максимальным количеством очков %s - кол-во очков %i\n", name[tmp_index], sumpobed[tmp_index] - sumporaj[tmp_index]);
 
-		break;
-	case 2:
+		int min = INT_MAX;
 		// Найти команду с минимальным количеством очков
 		for (int i = 0; i < r; i++)
 		{
 			if (sumpobed[i] - sumporaj[i] <= min)
 			{
 				min = sumpobed[i] - sumporaj[i];
+				tmp_index = i;
+
 			}
+		}
+		printf("Игрок c минимальным количеством очков: %s - кол-во очков %i\n", name[tmp_index], sumpobed[tmp_index] - sumporaj[tmp_index]);
+
+		// Найти игрока приближенного к среднему
+		min = INT_MAX;
+		float sr_zn = 0;
+		float *diff = (float*)malloc(r * sizeof(float));
+		for (int i = 0; i < r; i++)
+		{
+			sr_zn = sr_zn + (float)fabs(sumpobed[i] - sumporaj[i]);
+
+		}
+		sr_zn = sr_zn / r;
+		//printf("avg %f\n", sr_zn);
+
+		for (int i = 0; i < r; i++)
+		{
+			diff[i] = fabs((sumpobed[i] - sumporaj[i]) - sr_zn);
+			//printf("diff Игрок %s = %f\n", name[i], diff[i]);
 		}
 		for (int i = 0; i < r; i++)
 		{
-			if (sumpobed[i] - sumporaj[i] <= min)
+			if (diff[i] <= min)
 			{
-				printf("\nИгрок %s - кол-во очков %i\n", name[i], sumpobed[i] - sumporaj[i]);
+				min = diff[i];
+				tmp_index = i;
 			}
 		}
-
-		break;
-	case 3:
+		printf("Игрок с количеством очков приближенным к среднему: %s - кол-во очков %i\n", name[tmp_index], sumpobed[tmp_index] - sumporaj[tmp_index]);
+	}
+	else {
 		// Найти команды с количеством очков больше ввденного значения
-		printf("\rНайти игрока с количеством очков больше введённого значени \nВведите значение для поиска: ");
+		printf("\nНайти игрока с количеством очков больше введённого значени \nВведите значение для поиска: ");
 		int biggest;
 		scanf("%i", &biggest);
-		int exist_for_big = 0;
+		int exist = 0;
 		for (int i = 0; i < r; i++)
 		{
 			if (sumpobed[i] - sumporaj[i] > biggest)
 			{
-				exist_for_big = 1;
+				exist = 1;
 				printf("Игрок %s - %i кол-во очков\n", name[i], sumpobed[i] - sumporaj[i]);
 			}
 		}
-		if (exist_for_big == 0)
+		if (exist == 0)
 		{
 			printf("Таких игроков не существует");
 		}
-		break;
-	case 4:
 		// Найти команды с количеством очков меньше ввденного значения
-		printf("\rНайти игрока с количеством очков меньше введённого значения \nВведите значение для поиска: ");
+		printf("\nНайти игрока с количеством очков меньше введённого значения \nВведите значение для поиска: ");
 		int smallest;
 		scanf("%i", &smallest);
-		int exist_for_small = 0;
+		exist = 0;
 		for (int i = 0; i < r; i++)
 		{
 			if (sumpobed[i] - sumporaj[i] < smallest)
 			{
-				exist_for_small = 1;
+				exist = 1;
 				printf("Игрок %s - %i кол-во очков\n", name[i], sumpobed[i] - sumporaj[i]);
 			}
 		}
-		if (exist_for_small == 0)
+		if (exist == 0)
 		{
 			printf("Таких игроков не существует");
 		}
-		break;
-	default:
-		printf("Неправильный ввод\n");
-		break;
 	}
 
 	return 1;
@@ -415,9 +417,10 @@ int show_menu(int i, int r, int** b, char** name) {
 		//массив переменных для результирующей таблицы
 		int** res_tab_var = (int*)malloc(7 * sizeof(int)); // 0 побед; 1 место; 2 максколво; 3 минколво; 4 средколво; 5 сумпобед; 6 сумпораж;
 		for (int q = 0; q < 7; q++) {
-			res_tab_var[q] = (int*)malloc(r * sizeof(int)); //двумерный массив имён
+			res_tab_var[q] = (int*)malloc(r * sizeof(int)); //двумерный массив
 		}
-		result_tab_var_full(i, r, b, res_tab_var);
+
+		result_tab_var_full(i, r, b, res_tab_var); //вычисление и заполнение массива
 
 		printf("Пункты меню \n1. Вывод исходной таблицы \n2. Вывод результирующей таблицы \n3. Отсортировать игроков по месту\n4. Изменить имя игрока\n5. Найти игрока по фильтру\n6. Добавить нового игрока в конец списка \n7. Запись в файл \n0. Выход\n");
 
@@ -461,8 +464,11 @@ int show_menu(int i, int r, int** b, char** name) {
 			break;
 		case 5:
 			clrscr();
+			int sub_menu;
+			printf("1. Найти игроков с максимальным/минимальным/средним количеством очков\n2. Найти игрока с количеством очков больше/меньше введённого значения\nВыберите необходимый фильтр: ");
+			scanf("%i", &sub_menu);
 
-			find_filter(r, res_tab_var[5], res_tab_var[6], name);
+			find_filter(sub_menu, r, res_tab_var[5], res_tab_var[6], name);
 
 			printf("\n\n");
 			break;
@@ -540,6 +546,7 @@ int write_new_file(int r, int* b, char* new_file_name, char** name) {
 	}
 	fclose(new_file);
 
+	return 1;
 }
 
 int read_file(int i, int r, int *a, char* file_name, char **name) {
