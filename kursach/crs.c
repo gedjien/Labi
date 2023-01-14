@@ -133,9 +133,13 @@ void sort_select(int* ptr_arr, int n) {
 			buf = ptr_arr[i];
 			ptr_arr[i] = ptr_arr[min];
 			ptr_arr[min] = buf;
+
 		}
 
 	}
+
+
+
 }
 
 int result_tab_var_full(int i, int r, int* b, int** res_tab_var) {
@@ -428,7 +432,7 @@ int add_new_player(int i, int r, int* b, char** name) {
 			printf("%i ", tmp_massiv_znach[q][x]);
 		}printf("\n");
 	}
-
+//	printf("%i", r);
 
 	char file_name[] = "fscanf.txt";
 	puts("Введите название .txt файла (Без расширения): ");
@@ -445,7 +449,8 @@ int add_new_player(int i, int r, int* b, char** name) {
 		fprintf(new_file, "\n");
 	}
 	fclose(new_file);
-	exit(EXIT_SUCCESS);
+	//exit(EXIT_SUCCESS);
+
 	return 1;
 }
 
@@ -505,11 +510,21 @@ int show_menu(int i, int r, int** b, char** name) {
 
 			if (sub_menu == 1) {
 
-				sort_select(res_tab_var[8], r);
 
-				printf("Игрок c максимальным количеством очков: %s - кол-во очков %i\n", name[r - 1], res_tab_var[8][r - 1]);
-				printf("Игрок c минимальным количеством очков: %s - кол-во очков %i\n", name[0], res_tab_var[8][0]);
-				printf("Игрок с количеством очков приближенным к среднему: %s - кол-во очков %i\n", name[r / 2], res_tab_var[8][r / 2]);
+				char** name_ind_srt = (char**)calloc(r, sizeof(char*));// указатель на массив имён
+				for (int q = 0; q < r; q++) {
+					name_ind_srt[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
+					strcpy(name_ind_srt[q], name[q]); //заполнение значениями
+				}
+				sort_buble(res_tab_var[8], r, name_ind_srt);
+
+				for (int q = 0; q < r; q++) {
+					printf("%s %i\n", name_ind_srt[q], res_tab_var[8][q]);
+				}
+
+				printf("Игрок c максимальным количеством очков: %s - кол-во очков %i\n", name_ind_srt[r - 1], res_tab_var[8][r - 1]);
+				printf("Игрок c минимальным количеством очков: %s - кол-во очков %i\n", name_ind_srt[0], res_tab_var[8][0]);
+				printf("Игрок с количеством очков приближенным к среднему: %s - кол-во очков %i\n", name_ind_srt[r / 2], res_tab_var[8][r / 2]);
 			}
 			else {
 				printf("\nНайти игрока с количеством очков больше введённого значени \nВведите значение для поиска: ");
@@ -544,7 +559,7 @@ int show_menu(int i, int r, int** b, char** name) {
 		case 0:
 			clrscr();
 			printf("Выход\n");
-			exit(EXIT_SUCCESS);
+	//		exit(EXIT_SUCCESS);
 			break;
 
 		default:
