@@ -7,17 +7,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-//int clrscr();
-//int ishod_tablica(int i, int r, int* b, char** name);
-//int result_tablica(int i, int r, int** res_tab_var, char** name);
-//int result_tab_var_full(int i, int r, int* b, int** res_tab_var);
-//int find_filter(int r, int* sumpobed, int* sumporaj, char** name);
-//int sort_buble(int* ptrarr, int n, char** name);
-//int sort_place(int i, int r, char** name, int* mesto_sorted);
-//int add_new_player(int i, int r, int* a, char** name, int* temp_msv, char** temp_name);
-//int show_menu(int i, int r, int** b, char** name);
-//int write_new_file(int r, int* b, char* new_file_name, char** name);
-//int read_file(int i, int r, int* a, char* file_name, char** name);
+int clrscr();
+int ishod_tablica(int i, int r, int* b, char** name);
+int result_tablica(int i, int r, int** res_tab_var, char** name);
+int result_tab_var_full(int i, int r, int* b, int** res_tab_var);
+int find_diapaz(int sub_menu, int r, int* ball, char** name, int znach);
+int sort_buble(int* ptrarr, int n, char** name);
+int sort_place(int i, int r, char** name, int* mesto_sorted);
+int add_new_player(int i, int r, int* b, char** name);
+int show_menu(int i, int r, int** b, char** name);
+int write_new_file(int r, int* b, char* new_file_name, char** name);
+int read_file(int i, int r, int* a, char* file_name, char** name);
 
 int main() {
 
@@ -29,9 +29,9 @@ int main() {
 	int i = 0, r = 1; //колонки, строки
 
 	FILE* file;
-	char file_name[] = "fscanf.txt";
-	puts("Введите название .txt файла (Без расширения): "); 
-	scanf("%s", &file_name); 
+	char file_name[70] = "fscanf.txt";
+	puts("Введите название .txt файла (Без расширения): ");
+	scanf("%s", &file_name);
 	strcat(file_name, ".txt");
 	file = fopen(file_name, "r"); //открытие файла с данными
 	if (!file) { //проверка на существование файла
@@ -121,26 +121,6 @@ int result_tablica(int i, int r, int** res_tab_var, char** name) {
 	}
 
 };
-
-void sort_select(int* ptr_arr, int n) {
-	int min = 0;
-	int buf = 0;
-	for (int i = 0; i < n; i++) {
-		min = i;
-		for (int j = i + 1; j < n; j++)
-			min = (ptr_arr[j] < ptr_arr[min]) ? j : min;
-		if (i != min) {
-			buf = ptr_arr[i];
-			ptr_arr[i] = ptr_arr[min];
-			ptr_arr[min] = buf;
-
-		}
-
-	}
-
-
-
-}
 
 int result_tab_var_full(int i, int r, int* b, int** res_tab_var) {
 
@@ -268,7 +248,19 @@ int result_tab_var_full(int i, int r, int* b, int** res_tab_var) {
 	//}
 	int* mesto_sorted = (int*)malloc(i * sizeof(int));	for (int q = 0; q < r; q++) { mesto_sorted[q] = mesto[q]; }
 
-	sort_select(mesto_sorted, r);
+	int min = 0;
+	int buf = 0;
+	for (int i = 0; i < r; i++) {
+		min = i;
+		for (int j = i + 1; j < r; j++)
+			min = (mesto_sorted[j] < mesto_sorted[min]) ? j : min;
+		if (i != min) {
+			buf = mesto_sorted[i];
+			mesto_sorted[i] = mesto_sorted[min];
+			mesto_sorted[min] = buf;
+		}
+	}
+
 
 	for (int q = 0; q < i; q++) {
 		res_tab_var[7][q] = mesto_sorted[q];
@@ -280,10 +272,10 @@ int result_tab_var_full(int i, int r, int* b, int** res_tab_var) {
 	for (int q = 0; q < i; q++) {
 		fnd_msv[q] = res_tab_var[5][q] - res_tab_var[6][q];
 		res_tab_var[8][q] = fnd_msv[q];
-	//	printf("%i", res_tab_var[8][q]);
+		//	printf("%i", res_tab_var[8][q]);
 	}
 
-	
+
 
 	// освобождение памяти
 	//free(pobed);
@@ -364,75 +356,49 @@ int sort_place(int i, int r, char** name, int* mesto_sorted) {
 }
 
 int add_new_player(int i, int r, int* b, char** name) {
-	int* a = (int*)malloc(pow(r, 2) * sizeof(int));// указатель на массив значений
-	int* temp_msv = (int*)malloc(r * r * sizeof(int));
-	char** temp_name = (char**)calloc(r, sizeof(char*));// указатель на массив имён
-	for (int q = 0; q < r; q++) {
+	
+	//printf("%i\n", r);
+	
+	char** temp_name = (char**)calloc((r + 1), sizeof(char*));// указатель на новый массив имён
+	for (int q = 0; q < r+1; q++) {
 		temp_name[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
+	}
+
+	for (int q = 0; q < r; q++) {
 		strcpy(temp_name[q], name[q]); //заполнение значениями
 	}
 
-	//переменные для результирубщей таблицы
-	for (int q = 0; q < i; q++) {
-		for (int w = 0; w < i; w++) {
-			if (q == r - 1 & w == r - 1) { *(a + q * r + w) = 0; continue; }
-			*(a + q * r + w) = *(b + q * (r-1) + w);
-		}
+	puts("Введите имя нового игрока"); scanf("%s", temp_name[r]);
+
+	int** tmp_massiv_znach = (int*)malloc((r + 1) * sizeof(int));// указатель на массив значений
+	for (int q = 0; q < r+1; q++) {
+		tmp_massiv_znach[q] = (int*)malloc((r + 1) * sizeof(int)); //двумерный массив имён
 	}
 
-	for (int q = 0; q < r; q++) {
-		for (int x = 0; x < r; x++) {
-			printf("%i ", *(a + q * r + x));
-		}printf("\n");
-	}
-
-	r += 1;
-	i += 1;
-
-	free(name);
-
-	name = (char**)calloc(r, sizeof(char*));// указатель на массив имён
-	for (int q = 0; q < r; q++) {
-		name[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
-		if (q == r - 1) { puts("Введите имя нового игрока"); scanf("%s", name[q]); continue; };
-		strcpy(name[q], temp_name[q]); //заполнение значениями
-	}
-	for (int q = 0; q < r; q++) {
-		printf("%s\n", name[q]);
-	}
-
-	int** tmp_massiv_znach = (int*)malloc(r * sizeof(int));// указатель на массив значений
-	for (int q = 0; q < r; q++) {
-		tmp_massiv_znach[q] = (int*)malloc(r * sizeof(int)); //двумерный массив имён
-	}
+	//for (int q = 0; q < r+1; q++) {
+	//	printf("%s\n", temp_name[q]);
+	//}
 
 	int counter = 0;
 
-	for (int q = 0; q < r; q++) {
-		for (int x = 0; x < r; x++) {
-			if (q == r - 1 & x == r - 1) { tmp_massiv_znach[q][x] = 0; continue; }
-			if (q == r - 1) {
+	for (int q = 0; q < r+1; q++) {
+		for (int x = 0; x < r+1; x++) {
+			if (q == r & x == r) { tmp_massiv_znach[q][x] = 0; continue; }
+			if (q == r) {
 				printf("Введите количество очков против игрока %i (%s): ", x, temp_name[x]);
 				scanf("%i", &(tmp_massiv_znach[q][x]));
 
 				continue;
 			}
-			if (x == r - 1) {
+			if (x == r) {
 				printf("Введите количество очков игрока %i (%s) против нового игрока: ", q, temp_name[q]);
 				scanf("%i", &(tmp_massiv_znach[q][x]));
 				counter++;
 				continue;
 			}
-			tmp_massiv_znach[q][x] = *(b + q * r + x - counter);
+			tmp_massiv_znach[q][x] = *(b + q * (r+1) + x - counter);
 		}
 	}
-
-	for (int q = 0; q < r; q++) {
-		for (int x = 0; x < r; x++) {
-			printf("%i ", tmp_massiv_znach[q][x]);
-		}printf("\n");
-	}
-//	printf("%i", r);
 
 	char file_name[] = "fscanf.txt";
 	puts("Введите название .txt файла (Без расширения): ");
@@ -440,13 +406,24 @@ int add_new_player(int i, int r, int* b, char** name) {
 	strcat(file_name, ".txt");
 	FILE* new_file = fopen(file_name, "w");
 
-	for (int q = 0; q < r; q++) {
-		fprintf(new_file, "%s ", name[q]);
-		for (int x = 0; x < r; x++)
+	for (int q = 0; q < r + 1; q++) {
+		fprintf(new_file, "%s ", temp_name[q]);
+		for (int x = 0; x < r + 1; x++)
 		{
-			fprintf(new_file, "%i ", tmp_massiv_znach[q][x]);
+			if (x < r) {
+				fprintf(new_file, "%i ", tmp_massiv_znach[q][x]);
+			}
+			else {
+				fprintf(new_file, "%i", tmp_massiv_znach[q][x]);
+			}
 		}
-		fprintf(new_file, "\n");
+	
+		if (q == r) {
+			continue;
+		}
+		else {
+			fprintf(new_file, "\n");
+		}
 	}
 	fclose(new_file);
 	//exit(EXIT_SUCCESS);
@@ -505,22 +482,21 @@ int show_menu(int i, int r, int** b, char** name) {
 		case 5:
 			clrscr();
 			int sub_menu;
-			printf("1. Найти игроков с максимальным/минимальным/средним количеством очков\n2. Найти игрока с количеством очков больше/меньше введённого значения\nВыберите необходимый фильтр: ");
+			printf("1. Найти игроков с максимальным/минимальным/средним количеством очков\n2. Найти игрока с количеством очков больше введённого значения\nВыберите необходимый фильтр: ");
 			scanf("%i", &sub_menu);
 
 			if (sub_menu == 1) {
-
-
 				char** name_ind_srt = (char**)calloc(r, sizeof(char*));// указатель на массив имён
 				for (int q = 0; q < r; q++) {
 					name_ind_srt[q] = (char*)calloc(70, sizeof(char)); //двумерный массив имён
 					strcpy(name_ind_srt[q], name[q]); //заполнение значениями
 				}
+
 				sort_buble(res_tab_var[8], r, name_ind_srt);
 
-				for (int q = 0; q < r; q++) {
-					printf("%s %i\n", name_ind_srt[q], res_tab_var[8][q]);
-				}
+				//for (int q = 0; q < r; q++) {
+				//	printf("%s %i\n", name_ind_srt[q], res_tab_var[8][q]);
+				//}
 
 				printf("Игрок c максимальным количеством очков: %s - кол-во очков %i\n", name_ind_srt[r - 1], res_tab_var[8][r - 1]);
 				printf("Игрок c минимальным количеством очков: %s - кол-во очков %i\n", name_ind_srt[0], res_tab_var[8][0]);
@@ -531,7 +507,6 @@ int show_menu(int i, int r, int** b, char** name) {
 				int znach;
 				scanf("%i", &znach);
 				find_diapaz(sub_menu, r, res_tab_var[8], name, znach);
-
 			}
 
 
@@ -559,7 +534,7 @@ int show_menu(int i, int r, int** b, char** name) {
 		case 0:
 			clrscr();
 			printf("Выход\n");
-	//		exit(EXIT_SUCCESS);
+			//		exit(EXIT_SUCCESS);
 			break;
 
 		default:
@@ -581,10 +556,20 @@ int write_new_file(int r, int* b, char* new_file_name, char** name) {
 		fprintf(new_file, "%s ", name[q]);
 		for (int x = 0; x < r; x++)
 		{
-			fprintf(new_file, "%i ", *(b + q * r + x));
-			//printf("%i ", *(a + i * r + x));
-		} // чтение чисел
-		fprintf(new_file, "\n");
+			if (x < r-1) {
+				fprintf(new_file, "%i ", *(b + q * r + x));
+			}
+			else {
+				fprintf(new_file, "%i", *(b + q * r + x));
+			}
+		}
+
+		if (q == r-1) {
+			continue;
+		}
+		else {
+			fprintf(new_file, "\n");
+		}
 	}
 	fclose(new_file);
 
