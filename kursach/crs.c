@@ -11,7 +11,7 @@ int clrscr();
 int ishod_tablica(int i, int r, int* b, char** name);
 int result_tablica(int i, int r, int** res_tab_var, char** name);
 int result_tab_var_full(int i, int r, int* b, int** res_tab_var);
-int find_diapaz(int sub_menu, int r, int* ball, char** name, int znach);
+int find_diapaz(int r, int* ball, char** name, int znach);
 int sort_buble(int* ptrarr, int n, char** name);
 int sort_place(int i, int r, char** name, int* mesto_sorted);
 int add_new_player(int i, int r, int* b, char** name);
@@ -287,9 +287,10 @@ int result_tab_var_full(int i, int r, int* b, int** res_tab_var) {
 	//free(sumporaj);
 }
 
-int find_diapaz(int sub_menu, int r, int* ball, char** name, int znach) {
+int find_diapaz(int r, int* ball, char** name, int znach) {
 	// Найти команды с количеством очков больше ввденного значения
 	int exist = 0;
+	
 	for (int i = 0; i < r; i++)
 	{
 		if (ball[i] > znach)
